@@ -1,6 +1,37 @@
 <html>
   <head>
     <title>Predmon Dashboard</title>
+    <style>
+      body { font-family: sans-serif }
+      .up { color: green }
+      .down { color: red }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      tr:first-of-type {
+        border-bottom: 1px black solid;
+      }
+
+      th:not(:first-of-type) {
+        padding-left: 1em;
+      }
+
+      tr:nth-child(2) td {
+        padding-top: 1em;
+      }
+
+      td {
+        padding-bottom: 0.4em;
+      }
+
+      td:not(:first-of-type) {
+        padding-left: 1em;
+        text-align: center;
+      }
+    </style>
+
     <script>
       const STATE_JSON = "https://raw.githubusercontent.com/ahri/predmon-central/main/state.json";
       
@@ -15,7 +46,8 @@
             if (check in inverted) {
               inverted[check][hostname] = data[hostname][check];
             } else {
-              inverted[check] = { hostname: data[hostname][check] };
+                    inverted[check] = {};
+                    inverted[check][hostname] = data[hostname][check];
             }
           }
         }
@@ -24,6 +56,7 @@
       }
       
       function generateDashboard(data) {
+        let upAll = true;
         const inverted = invertData(data);
         
         let html = "<table><tr><th>Check</th>";
@@ -33,17 +66,22 @@
         html += "</tr>";
         
         for (const check in inverted) {
-          html += `<tr><td>${check}</td>`;
+          let row = `<td>${check}</td>`;
+          let upCheck = true;
           for (const hostname in data) {
-            const val = inverted[check][hostname];
-            html += `<td>${val === undefined ? "" : val}</td>`;
+            let val = inverted[check][hostname];
+            if (val === false) {
+              upCheck = false;
+              upAll = false;
+            }
+            row += `<td>${val === undefined ? "" : `<span class=${val ? "up" : "down"}>⬤</span>`}</td>`;
           }
-          html += "</tr>";
+          html += `<tr class=${upCheck ? "up" : "down"}>${row}</tr>`;
         }
         
         html += "</table>";
         
-        return html;
+        return `<center><h1 class=${upAll ? "up" : "down"}>Predmon</h1>${html}</center>`;
       }
       
       async function writeDashboard() {
@@ -51,7 +89,8 @@
         document.body.innerHTML = generateDashboard(data);
       }
       
-      setInterval(writeDashboard, 1000);
+      setInterval(writeDashboard, 10_000);
+      document.addEventListener('DOMContentLoaded', writeDashboard);
     </script>
   </head>
   <body>
