@@ -37,7 +37,7 @@
       const STATE_JSON = "https://raw.githubusercontent.com/ahri/predmon-central/main/state.json";
       
       async function getData() {
-        return fetch(STATE_JSON).then(res => res.json());
+        return fetch(STATE_JSON, {pragma: no-cache and a cache-control: no-cache}).then(res => res.json());
       }
       
       function invertData(data) {
