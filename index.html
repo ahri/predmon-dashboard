@@ -46,7 +46,7 @@
         return html;
       }
       
-      function async writeDashboard() {
+      async function writeDashboard() {
         const data = await getData();
         document.body.innerHTML = generateDashboard(data);
       }
