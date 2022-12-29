@@ -1,6 +1,58 @@
 <html>
   <head>
     <title>Predmon Dashboard</title>
+    <script>
+      const STATE_JSON = "https://raw.githubusercontent.com/ahri/predmon-central/main/state.json";
+      
+      async function getData() {
+        return fetch(STATE_JSON).then(res => res.json());
+      }
+      
+      function invertData(data) {
+        const inverted = {};
+        for (const hostname in data) {
+          for (const check in data[hostname]) {
+            if (check in inverted) {
+              inverted[check][hostname] = data[hostname][check];
+            } else {
+              inverted[check] = { hostname: data[hostname][check] };
+            }
+          }
+        }
+        
+        return inverted;
+      }
+      
+      function generateDashboard(data) {
+        const inverted = invertData(data);
+        
+        let html = "<table><tr><th>Check</th>";
+        for (const hostname in data) {
+          html += `<th>${hostname}</th>`;
+        }
+        html += "</tr>";
+        
+        for (const check in inverted) {
+          html += `<tr><td>${check}</td>`;
+          for (const hostname in data) {
+            const val = inverted[check][hostname];
+            html += `<td>${val === undefined ? "" : val}</td>`;
+          }
+          html += "</tr>";
+        }
+        
+        html += "</table>";
+        
+        return html;
+      }
+      
+      function async writeDashboard() {
+        const data = await getData();
+        document.body.innerHTML = generateDashboard(data);
+      }
+      
+      setInterval(writeDashboard, 1000);
+    </script>
   </head>
   <body>
   </body>
