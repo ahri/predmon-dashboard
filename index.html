@@ -76,7 +76,7 @@
           let row = `<td>${escapeHtml(check)}</td>`;
           let upCheck = true;
           for (const hostname in data) {
-            let val = inverted[check][hostname];
+            const val = inverted[check][hostname];
             if (val === false) {
               upCheck = false;
               upAll = false;
