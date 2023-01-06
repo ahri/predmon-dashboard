@@ -65,7 +65,7 @@
       }
       
       function generateDashboard(data) {
-        let upAll = true;
+        let allClass = "up";
         const inverted = invertData(data);
         
         let html = "<table><tr><th>Check</th>";
@@ -76,29 +76,26 @@
         
         for (const check in inverted) {
           let row = `<td>${escapeHtml(check)}</td>`;
-          let upCheck = true;
+          let rowClass = "up";
           for (const hostname in data) {
             const val = inverted[check][hostname];
             if (val === false) {
-              upCheck = false;
-              upAll = false;
+              allClass = "down";
+              rowClass = "down";
             }
             row += `<td>${val === undefined ? "" : `<span class=${val ? "up" : "down"}>⬤</span>`}</td>`;
           }
           
-          let className = "up";
-          if (!upCheck) {
-            className = "down";
-          } else if (inverted[check].length < MIN_ADVISED_DOUBLE_CHECKS) {
-            className = "fragile";
+          if (rowClass === "up" && inverted[check].length < MIN_ADVISED_DOUBLE_CHECKS) {
+            rowClass = "fragile";
           }
           
-          html += `<tr class=${className}>${row}</tr>`;
+          html += `<tr class=${rowClass}>${row}</tr>`;
         }
         
         html += "</table>";
         
-        return `<center><h1 class=${upAll ? "up" : "down"}>predmon</h1>${html}</center>`;
+        return `<center><h1 class=${allClass}>predmon</h1>${html}</center>`;
       }
       
       async function writeDashboard() {
