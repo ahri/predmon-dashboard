@@ -5,6 +5,7 @@
     <style>
       body { font-family: sans-serif }
       .up { color: green }
+      .fragile { color: orange }
       .down { color: red }
 
       table {
@@ -35,6 +36,7 @@
 
     <script>
       const STATE_JSON = "https://raw.githubusercontent.com/ahri/predmon-central/main/state.json";
+      const MIN_ADVISED_DOUBLE_CHECKS = 2;
       
       function escapeHtml(html) {
         const el = document.createElement("span");
@@ -83,7 +85,15 @@
             }
             row += `<td>${val === undefined ? "" : `<span class=${val ? "up" : "down"}>⬤</span>`}</td>`;
           }
-          html += `<tr class=${upCheck ? "up" : "down"}>${row}</tr>`;
+          
+          let className = "up";
+          if (!upCheck) {
+            className = "down";
+          } else if (inverted[check].length < MIN_ADVISED_DOUBLE_CHECKS) {
+            className = "fragile";
+          }
+          
+          html += `<tr class=${className}>${row}</tr>`;
         }
         
         html += "</table>";
