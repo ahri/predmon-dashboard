@@ -36,6 +36,12 @@
     <script>
       const STATE_JSON = "https://raw.githubusercontent.com/ahri/predmon-central/main/state.json";
       
+      function escapeHtml(html) {
+        const el = document.createElement("span");
+        el.appendChild(document.createTextNode(html));
+        return el.innerHTML;
+      }
+      
       async function getData() {
         return fetch(STATE_JSON, {"pragma": "no-cache", "cache-control": "no-cache"}).then(res => res.json());
       }
@@ -62,12 +68,12 @@
         
         let html = "<table><tr><th>Check</th>";
         for (const hostname in data) {
-          html += `<th>${hostname}</th>`;
+          html += `<th>${escapeHtml(hostname)}</th>`;
         }
         html += "</tr>";
         
         for (const check in inverted) {
-          let row = `<td>${check}</td>`;
+          let row = `<td>${escapeHtml(check)}</td>`;
           let upCheck = true;
           for (const hostname in data) {
             let val = inverted[check][hostname];
