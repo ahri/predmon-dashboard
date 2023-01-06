@@ -45,7 +45,7 @@
       }
       
       async function getData() {
-        return fetch(STATE_JSON, {"pragma": "no-cache", "cache-control": "no-cache"}).then(res => res.json());
+        return fetch(STATE_JSON + `?cachebuster=${Date.now()}`, {"pragma": "no-cache", "cache-control": "no-cache"}).then(res => res.json());
       }
       
       function invertData(data) {
