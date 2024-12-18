@@ -55,8 +55,8 @@
             if (check in inverted) {
               inverted[check][hostname] = data[hostname][check];
             } else {
-                    inverted[check] = {};
-                    inverted[check][hostname] = data[hostname][check];
+              inverted[check] = {};
+              inverted[check][hostname] = data[hostname][check];
             }
           }
         }
@@ -98,6 +98,18 @@
         }
         
         html += "</table>";
+
+        switch (allClass) {
+          case "up":
+            setFavicon("forestgreen");
+            break;
+          case "down":
+            setFavicon("red");
+            break;
+          case "fragile":
+            setFavicon("darkorange");
+            break;
+        }
         
         return `<center><h1 class=${allClass}>predmon</h1>${html}</center>`;
       }
@@ -106,7 +118,32 @@
         const data = await getData();
         document.body.innerHTML = generateDashboard(data);
       }
-      
+
+      function setFavicon(color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 32;
+        canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+
+        // Draw a circle filled with the desired color
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Convert canvas to a data URL
+        const faviconURL = canvas.toDataURL('image/png');
+
+        // Find or create the <link> element for the favicon
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = faviconURL;
+      }
+
       setInterval(writeDashboard, 10_000);
       document.addEventListener('DOMContentLoaded', writeDashboard);
     </script>
