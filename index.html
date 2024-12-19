@@ -86,7 +86,7 @@
             row += `<td>${val === undefined ? "" : `<span class=${val ? "up" : "down"}>⬤</span>`}</td>`;
           }
           
-          if (rowClass === "up" && Object.keys(inverted[check]).length < MIN_ADVISED_DOUBLE_CHECKS) {
+          if (!check.endsWith("-unique") && rowClass === "up" && Object.keys(inverted[check]).length < MIN_ADVISED_DOUBLE_CHECKS) {
             rowClass = "fragile";
 
             if (allClass === "up") {
